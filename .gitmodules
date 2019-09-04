@@ -1,0 +1,15 @@
+[submodule "deps/libmicro"]
+	path = deps/libmicro
+	url = git@github.com:iwasz/libmicro.git
+[submodule "deps/etl"]
+	path = deps/etl
+	url = git@github.com:ETLCPP/etl.git
+[submodule "deps/paho.mqtt.embedded-c"]
+	path = deps/paho.mqtt.embedded-c
+	url = https://github.com/eclipse/paho.mqtt.embedded-c.git
+[submodule "deps/libstatemachine"]
+	path = deps/libstatemachine
+	url = git@github.com:iwasz/libstatemachine.git
+[submodule "deps/libcomms"]
+	path = deps/libcomms
+	url = git@github.com:iwasz/libcomms.git
