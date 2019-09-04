@@ -58,7 +58,6 @@ int main ()
                         "| (_| | |_| | (_| | | |_) | (_) | (_) | |_ \r\n"
                         " \\__,_|\\__,_|\\__,_|_|_.__/ \\___/ \\___/ \\__|\r\n");
 
-
         Gpio espUartGpios (GPIOA, GPIO_PIN_9 | GPIO_PIN_10, GPIO_MODE_AF_OD, GPIO_PULLUP, GPIO_SPEED_FREQ_HIGH, GPIO_AF7_USART1);
         Usart espUart (USART1, 115200);
         HAL_NVIC_SetPriority (USART1_IRQn, 1, 0);
@@ -66,12 +65,20 @@ int main ()
         Esp8266 esp8266 (espUart);
         espUart.startReceive ();
 
+        Timer t{ 1000 };
+
         while (true) {
                 // blink.setTimeSlot (0, config.blinkFrequencyMs);
 
                 //                if (config.blinkFrequencyMs > 0) {
                 blink.run ();
                 esp8266.run ();
+
+                if (t.isExpired ()) {
+                        uint8_t buf[] = { 'a', 'l', 'a', ' ', 'm', 'a', 'k', 'o', 't', 'a', '\r', '\n' };
+                        esp8266.send (0, buf, sizeof (buf));
+                        t.start (1000);
+                }
 
                 //                }
 
