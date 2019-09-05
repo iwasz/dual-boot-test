@@ -65,7 +65,8 @@ int main ()
         Esp8266 esp8266 (espUart);
         espUart.startReceive ();
 
-        Timer t{ 1000 };
+        Timer t;
+        t.start (10000);
 
         while (true) {
                 // blink.setTimeSlot (0, config.blinkFrequencyMs);
@@ -75,9 +76,24 @@ int main ()
                 esp8266.run ();
 
                 if (t.isExpired ()) {
-                        uint8_t buf[] = { 'a', 'l', 'a', ' ', 'm', 'a', 'k', 'o', 't', 'a', '\r', '\n' };
-                        esp8266.send (0, buf, sizeof (buf));
-                        t.start (1000);
+                        static int i = 0;
+
+                        if (i == 0 && !esp8266.isTcpConnected ()) {
+                                esp8266.connect (nullptr, 0);
+                        }
+
+                        if (i == 1 && esp8266.isTcpConnected () && !esp8266.isSending ()) {
+                                uint8_t buf[] = { 'a', 'l', 'a', ' ', 'm', 'a', 'k', 'o', 't', 'a', '\r', '\n' };
+                                esp8266.send (buf, sizeof (buf));
+                        }
+
+                        if (i == 2 && esp8266.isTcpConnected () && !esp8266.isSending ()) {
+                                esp8266.disconnect ();
+                        }
+
+                        t.start (10000);
+                        ++i;
+                        i %= 3;
                 }
 
                 //                }
