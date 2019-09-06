@@ -19,6 +19,11 @@ INCLUDE_DIRECTORIES ("${LIB_MICRO_ROOT}/src")
 SET (LIB_COMMS_ROOT "deps/libcomms")
 INCLUDE_DIRECTORIES ("${LIB_COMMS_ROOT}/src")
 
+#add_subdirectory(deps/fmt EXCLUDE_FROM_ALL)
+#INCLUDE_DIRECTORIES ("deps/fmt/include")
+
+include_directories (deps/GSL/include)
+
 # +-----------------+
 # | My code         |
 # +-----------------+
@@ -75,6 +80,7 @@ ADD_EXECUTABLE(${CMAKE_PROJECT_NAME}.elf
     "${LIB_COMMS_ROOT}/src/esp8266/Esp8266.cc"
     "${LIB_COMMS_ROOT}/src/esp8266/SendNetworkAction.h"
     "${LIB_COMMS_ROOT}/src/esp8266/SendNetworkAction.cc"
+    "${LIB_COMMS_ROOT}/src/esp8266/Types.h"
     "${LIB_COMMS_ROOT}/src/AtCommandAction.cc"
     "${LIB_COMMS_ROOT}/src/AtCommandAction.h"
 

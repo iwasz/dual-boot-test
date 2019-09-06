@@ -19,6 +19,7 @@
 #include <cstring>
 #include <esp8266/Esp8266.h>
 //#include "BinaryEvent.h"
+//#include <fmt/core.h>
 
 /*****************************************************************************/
 
@@ -58,6 +59,9 @@ int main ()
                         "| (_| | |_| | (_| | | |_) | (_) | (_) | |_ \r\n"
                         " \\__,_|\\__,_|\\__,_|_|_.__/ \\___/ \\___/ \\__|\r\n");
 
+        //        fmt::format("The answer is {}.", 42);
+        //        fmt::print ("asdasd");
+
         Gpio espUartGpios (GPIOA, GPIO_PIN_9 | GPIO_PIN_10, GPIO_MODE_AF_OD, GPIO_PULLUP, GPIO_SPEED_FREQ_HIGH, GPIO_AF7_USART1);
         Usart espUart (USART1, 115200);
         HAL_NVIC_SetPriority (USART1_IRQn, 1, 0);
@@ -67,6 +71,9 @@ int main ()
 
         Timer t;
         t.start (10000);
+
+        Timer rxThroughput{ 1000 };
+        size_t rxBytes = 0;
 
         while (true) {
                 // blink.setTimeSlot (0, config.blinkFrequencyMs);
@@ -84,16 +91,39 @@ int main ()
 
                         if (i == 1 && esp8266.isTcpConnected () && !esp8266.isSending ()) {
                                 uint8_t buf[] = { 'a', 'l', 'a', ' ', 'm', 'a', 'k', 'o', 't', 'a', '\r', '\n' };
-                                esp8266.send (buf, sizeof (buf));
+                                esp8266.send (buf);
                         }
 
-                        if (i == 2 && esp8266.isTcpConnected () && !esp8266.isSending ()) {
-                                esp8266.disconnect ();
-                        }
+                        //                        if (i == 2 && esp8266.isTcpConnected () && !esp8266.isSending ()) {
+                        //                                esp8266.disconnect ();
+                        //                        }
 
                         t.start (10000);
                         ++i;
                         i %= 3;
+                }
+
+                if (!esp8266.getReceiveBuffer ().empty ()) {
+                        size_t size;
+
+                        {
+                                InterruptLock lock;
+                                size = esp8266.getReceiveBuffer ().size ();
+                                esp8266.getReceiveBuffer ().clear ();
+                        }
+
+                        rxBytes += size;
+                }
+
+                if (rxThroughput.isExpired ()) {
+                        debug.print ("Rx : ");
+                        debug.print (rxBytes);
+                        debug.println ("B, ");
+                        debug.print ("speed : ");
+                        debug.print ((rxBytes * 8));
+                        debug.println ("bps");
+                        rxThroughput.start (1000);
+                        rxBytes = 0;
                 }
 
                 //                }

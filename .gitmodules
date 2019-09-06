@@ -13,3 +13,9 @@
 [submodule "deps/libcomms"]
 	path = deps/libcomms
 	url = git@github.com:iwasz/libcomms.git
+[submodule "deps/fmt"]
+	path = deps/fmt
+	url = git@github.com:fmtlib/fmt.git
+[submodule "deps/GSL"]
+	path = deps/GSL
+	url = git@github.com:microsoft/GSL.git
