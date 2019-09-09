@@ -76,9 +76,6 @@ int main ()
         size_t rxBytes = 0;
 
         while (true) {
-                // blink.setTimeSlot (0, config.blinkFrequencyMs);
-
-                //                if (config.blinkFrequencyMs > 0) {
                 blink.run ();
                 esp8266.run ();
 
@@ -89,7 +86,8 @@ int main ()
                                 esp8266.connect (nullptr, 0);
                         }
 
-                        if (i == 1 && esp8266.isTcpConnected () && !esp8266.isSending ()) {
+                        // Sending as fast as pososble.
+                        if (esp8266.isTcpConnected ()) {
                                 uint8_t buf[] = { 'a', 'l', 'a', ' ', 'm', 'a', 'k', 'o', 't', 'a', '\r', '\n' };
                                 esp8266.send (buf);
                         }
@@ -97,6 +95,7 @@ int main ()
                         //                        if (i == 2 && esp8266.isTcpConnected () && !esp8266.isSending ()) {
                         //                                esp8266.disconnect ();
                         //                        }
+
 
                         t.start (10000);
                         ++i;
@@ -115,7 +114,7 @@ int main ()
                         rxBytes += size;
                 }
 
-                if (rxThroughput.isExpired ()) {
+                if (esp8266.isTcpConnected () && rxThroughput.isExpired ()) {
                         debug.print ("Rx : ");
                         debug.print (rxBytes);
                         debug.println ("B, ");
